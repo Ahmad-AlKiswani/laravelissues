@@ -1,0 +1,18 @@
+// source 
+
+https://stackoverflow.com/questions/276927/can-i-concatenate-multiple-mysql-rows-into-one-field
+
+https://www.itsolutionstuff.com/post/group-concat-with-separator-in-laravel-exampleexample.html
+
+// 1055 Error
+https://stackoverflow.com/questions/40917189/laravel-syntax-error-or-access-violation-1055-error
+
+// my code
+
+$booking = Booking::where("booking.status" , 1)
+            ->select("*"
+                ,DB::raw("(GROUP_CONCAT(customers.fname , ' ' , customers.lname SEPARATOR ', ')) as customers"))
+            ->join("booking_detail","booking_detail.booking_id","=","booking.id")
+            ->join("customers","customers.id","=","booking_detail.customer_id")
+            ->groupBy('booking_detail.booking_id')
+            ->get();
