@@ -16,3 +16,13 @@ $booking = Booking::where("booking.status" , 1)
             ->join("customers","customers.id","=","booking_detail.customer_id")
             ->groupBy('booking_detail.booking_id')
             ->get();
+            
+            
+// SQL 
+
+select *, (GROUP_CONCAT(customers.fname , ' ' , customers.lname SEPARATOR ', ')) as `customers` 
+from `booking` 
+inner join `booking_detail` on `booking_detail`.`booking_id` = `booking`.`id` 
+inner join `customers` on `customers`.`id` = `booking_detail`.`customer_id` 
+where `booking`.`status` = 1 
+group by `booking_detail`.`booking_id`
