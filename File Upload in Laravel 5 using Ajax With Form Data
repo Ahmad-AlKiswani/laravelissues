@@ -1,0 +1,89 @@
+// source
+
+
+https://www.bladephp.co/file-upload-laravel5-using-ajax
+
+https://www.webslesson.info/2018/09/upload-image-in-laravel-using-ajax.html
+
+// fix error
+
+https://stackoverflow.com/questions/12755945/jquery-and-html-formdata-returns-uncaught-typeerror-illegal-invocation
+
+
+/// my code
+
+
+$.ajaxSetup({
+            headers: {
+                'X-CSRF-Token': $('meta[name=_token]').attr('content')
+            }
+        });
+
+        var Customer;
+        $('#frmCustomer').submit(function (event) {
+            event.preventDefault();
+
+            // var passport_img_fd = new FormData();
+            // var files_passport_img = $('#passport_img')[0].files[0];
+            // passport_img_fd.append('passport_img',files_passport_img);
+            //
+            // var job_center_img_fd = new FormData();
+            // var files_job_center_img = $('#jobCenter_img')[0].files[0];
+            // job_center_img_fd.append('jobCenter_img',files_job_center_img);
+
+            var fd = new FormData();
+            var files_passport_img = $('#passport_img')[0].files[0];
+            var files_job_center_img = $('#jobCenter_img')[0].files[0];
+            fd.append('passport_img',files_passport_img);
+            fd.append('jobCenter_img',files_job_center_img);
+
+            fd.append('ajaxCall',"ajaxCall");
+            fd.append('fname',$('#fname').val() );
+            fd.append('lname',$('#lname').val());
+            fd.append('email',$('#email').val());
+            fd.append('phone',$('#phone').val());
+            fd.append('nationality',$('#nationality').val());
+            fd.append('passport_no',$('#passport_no').val());
+            fd.append('birthday',$('#birthday').val());
+            fd.append('gender',$(".gender:checked").val());
+            fd.append('about_customer',$('#about_customer').val());
+
+
+            request = $.ajax({
+                url: "{{url('/')}}/addNewCustomer",
+                type: "post",
+                data: fd,
+                contentType: false, // The content type used when sending data to the server.
+                cache: false, // To unable request pages to be cached
+                processData: false,
+
+            });
+
+
+            // Callback handler that will be called on success
+            request.done(function (data){
+                // Log a message to the console
+                if(data.split(',')[0] =="success"){
+                    $('#CustomerModel').modal('hide');
+                    getCustomer(data.split(',')[1]);
+                    ClearCustomer();
+                    return false;
+
+                }
+
+                else{
+                    console.log(data);
+                }
+
+            });
+
+            // Callback handler that will be called on failure
+            request.fail(function (jqXHR, textStatus, errorThrown){
+                // Log the error to the console
+                console.error(
+                    "The following error occurred: "+
+                    textStatus, errorThrown
+                );
+            });
+
+        });
