@@ -1,0 +1,105 @@
+// create middleware Localization
+
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Support\Facades\App;
+use MongoDB\Driver\Session;
+
+class Localization
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        if($request->session()->has('lang')){
+            App::setLocale($request->session()->get('lang'));
+        }
+        return $next($request);
+    }
+}
+
+
+
+// add this in kernel 
+
+protected $middlewareGroups = [
+        'web' => [
+            ...
+            \App\Http\Middleware\Localization::class,
+        ],
+        .....
+
+
+
+// set defult language in config/app.php
+
+'locale' => 'en',
+....
+
+
+
+// in route add function lang :
+
+Route::get('lang/{lang}' , function($lang){
+
+                Session::put('lang',$lang);
+                return redirect()->back();
+
+
+            });
+
+
+// javascript and html  example
+
+
+ <li class="dropdown dropdown-language nav-item"><a class="dropdown-toggle nav-link" id="dropdown-flag" href="#" data-toggle="dropdown"
+                                                                       aria-haspopup="true" aria-expanded="false"><i class=""></i><span class="selected-language"></span></a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown-flag">
+                            <a class="dropdown-item" id="english" href="{{url('/')}}/admin/lang/en"><i class="flag-icon flag-icon-gb"></i> English</a>
+                            {{--                      <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-fr"></i> French</a>--}}
+                            {{--                      <a class="dropdown-item" href="#"><i class="flag-icon flag-icon-cn"></i> Chinese</a>--}}
+                            <a class="dropdown-item" id="german" href="{{url('/')}}/admin/lang/gr"><i class="flag-icon flag-icon-de"></i> German</a>
+                        </div>
+
+                        <script>
+                            $(document).ready(function(){
+                                if('{{App::getLocale()}}' == 'en'){
+                                    $("#dropdown-flag i").removeClass();
+                                    $("#dropdown-flag i").addClass("flag-icon flag-icon-gb");
+                                }else{
+                                    $("#dropdown-flag i").removeClass();
+                                    $("#dropdown-flag i").addClass("flag-icon flag-icon-de");
+                                }
+
+                                $("#english").click(function(){
+                                    $("#dropdown-flag i").removeClass();
+                                    $("#dropdown-flag i").addClass("flag-icon flag-icon-gb");
+                                    {{--                                    {{Session::put('lang' , 'en')}}--}}
+                                    {{--                                    alert('{{App::getLocale()}}');--}}
+                                    // location.reload();
+
+                                });
+                                $("#german").click(function(){
+                                    $("#dropdown-flag i").removeClass();
+                                    $("#dropdown-flag i").addClass("flag-icon flag-icon-de");
+                                    {{--                                    {{Session::put('lang' , 'gr')}}--}}
+                                    {{--alert('{{App::getLocale()}}');--}}
+                                    // location.reload();
+                                });
+                            });
+                        </script>
+                    </li>
+
+
+
+
+
