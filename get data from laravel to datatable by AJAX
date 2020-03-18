@@ -1,0 +1,90 @@
+// html
+<table class="table table-striped table-bordered" id="customersTable">
+              <thead class="bg-primary">
+              <tr>
+                  <th>#</th>
+                  <th> {{trans('constants.guest_name')}}</th>
+                  <th> {{trans('constants.type')}}</th>
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+
+
+
+
+
+
+
+
+// javascript function
+
+function getDataCustomerTable(){
+            var customersTable = $('#customersTable').DataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false,
+                "bAutoWidth": false,
+                "bDestroy": true,
+                'scrollY':'25vh',
+                'scrollCollapse': true,
+                "ordering": false,
+                "bProcessing": true,
+                "bServerSide": true,
+                "sAjaxSource": "{{url('/')}}/getCustomerCompanion",
+                "fnServerParams": function ( aoData ) {
+                    aoData.push( { "name": "customers_id", "value":  $('#customersId').val()  } );
+                },
+                columns: [
+                    { data: "id" },
+                    { data: "customer_name" },
+                    { data: "type" },
+                ],
+                "fnDrawCallback": function( oSettings ) {
+                    guestCount = oSettings['_iRecordsTotal'];
+                }
+            });
+        }
+
+
+
+
+
+
+// IN CONTROLLER FUNCTION
+
+public function getCustomerCompanion(Request $request){
+        $muster_customer =  Customers::where('id',$request->customers_id)->first();
+
+        $companion_customer = Companion::where('customer_id' ,$request->customers_id)->where('status',1);
+
+        $column=array();
+        $dataTable = array();
+        $offset = 1;
+        $col['id']=$offset;
+        $col['customer_name']=$muster_customer->fname." ".$muster_customer->lname;
+        $col['type']='Muster';
+        array_push($column, $col);
+        $companion_count =  $companion_customer->count();
+
+        if($companion_count > 0){
+            $companion_date =  $companion_customer->get();
+            foreach ($companion_date as $ComData){
+                $offset++;
+                $col['id']=$offset;
+                $col['customer_name']=$ComData->name;
+                $col['type']='Companion';
+                array_push($column, $col);
+            }
+        }
+
+        $dataTable['sEcho']=$request->sEcho;
+        $dataTable['aaData']=$column;
+        $dataTable['iTotalRecords']=$companion_count + 1;
+        $dataTable['iTotalDisplayRecords']=$companion_count + 1;
+
+        return json_encode($dataTable);
+
+    }
