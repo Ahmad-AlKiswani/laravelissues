@@ -1,0 +1,14 @@
+https://laracasts.com/discuss/channels/laravel/getting-the-first-and-last-date-of-the-current-month-and-past-2-months
+
+
+
+$first_day_of_the_current_month = Carbon::today()->startOfMonth();
+$last_day_of_the_current_month = $first_day_of_the_current_month->copy()->endOfMonth();
+
+$first_day_of_month_1 = $first_day_of_the_current_month->copy()->subMonth();
+$last_day_of_month_1 = $first_day_of_month_1->copy()->endOfMonth();
+
+$first_day_of_month_2 = $first_day_of_the_current_month->copy()->subMonths(2);
+$last_day_of_month_2 = $first_day_of_month_2->copy()->endOfMonth();
+
+{{ $first_day_of_the_current_month->toDateString() }}
