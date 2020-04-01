@@ -1,0 +1,16 @@
+https://stackoverflow.com/questions/41443987/finding-days-between-two-dates-in-laravel/41444467
+
+
+$fdate = $request->Fdate;
+$tdate = $request->Tdate;
+$datetime1 = new DateTime($fdate);
+$datetime2 = new DateTime($tdate);
+$interval = $datetime1->diff($datetime2);
+$days = $interval->format('%a');//now do whatever you like with $days
+
+
+//if has any issues 
+
+https://stackoverflow.com/questions/33550247/php-fatal-error-call-to-a-member-function-diff-on-a-non-object-in-comparin
+
+https://stackoverflow.com/questions/45858410/laravel-carbon-date-diffindays-on-string-error
