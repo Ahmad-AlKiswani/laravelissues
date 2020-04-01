@@ -1,0 +1,6 @@
+https://stackoverflow.com/questions/8529656/how-do-i-convert-a-string-to-a-number-in-php
+
+
+$num = "3.14";
+$int = (int)$num;
+$float = (float)$num;
